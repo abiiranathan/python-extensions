@@ -2,5 +2,5 @@
 .env
 build
 dist
-UNKNOWN.egg-info
+*.egg-info
 *.so
