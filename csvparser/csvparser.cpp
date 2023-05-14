@@ -14,19 +14,20 @@ namespace py = pybind11;
 
 py::list transform_row(const std::vector<std::string>& row, const py::list& transforms);
 
-std::string trim(const std::string& str) {
+void trim(std::string& str) {
     // Find the position of the first non-whitespace character
     size_t first = str.find_first_not_of(' ');
     if (first == std::string::npos) {
         // If the string is all whitespace, return an empty string
-        return "";
+        str.clear();
+        return;
     }
 
     // Find the position of the last non-whitespace character
     size_t last = str.find_last_not_of(' ');
 
-    // Extract the trimmed substring
-    return str.substr(first, last - first + 1);
+    // Change the string in place to avoid unnecessary memory allocations
+    str = str.substr(first, last - first + 1);
 }
 
 py::list parseCSV(const std::string& filePath, const py::kwargs& kwargs) {
@@ -89,12 +90,12 @@ py::list parseCSV(const std::string& filePath, const py::kwargs& kwargs) {
                 cell = cell.substr(0, cell.length() - 1);  // Remove the trailing quote
             }
 
+            // Trim whitespace if neccessary.
             if (trimSpace) {
-                // TODO: TRIM white space around each cell
-                row.push_back(trim(cell));
-            } else {
-                row.push_back(cell);
+                trim(cell);
             }
+
+            row.push_back(cell);
         }
 
         if (!skipHeader && n == 1) {
