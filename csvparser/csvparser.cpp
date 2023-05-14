@@ -84,10 +84,18 @@ py::list parseCSV(const std::string& filePath, const py::kwargs& kwargs) {
                 cell = cell.substr(1);  // Remove the leading quote
             }
 
-            if (insideQuotedField && !cell.empty() && cell[cell.length() - 1] == '"') {
-                // End of quoted field
-                insideQuotedField = false;
-                cell = cell.substr(0, cell.length() - 1);  // Remove the trailing quote
+            if (insideQuotedField) {
+                // Check if the cell ends with a quote
+                if (!cell.empty() && cell[cell.length() - 1] == '"') {
+                    insideQuotedField = false;
+                    cell = cell.substr(0, cell.length() - 1);  // Remove the trailing quote
+                } else {
+                    // Cell has a comma in the middle, append the next portion of the cell
+                    cell += delimiter;
+                    std::string nextCell;
+                    std::getline(lineStream, nextCell, '"');
+                    cell += nextCell;
+                }
             }
 
             // Trim whitespace if neccessary.

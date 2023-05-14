@@ -13,7 +13,6 @@ def transform_city(cell: str):
 
 transforms = [None, transform_age, transform_city]
 
-for _ in range(2000):
-    cities = csvparser.parse_csv("cities.csv", trim=True, transforms=transforms)
-    pprint(cities)
+cities = csvparser.parse_csv("cities.csv", trim=True, transforms=transforms)
+pprint(cities)
 
